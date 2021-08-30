@@ -1,6 +1,5 @@
 package com.xxx.cloud.auth.security.jose;
 
-import com.xxx.cloud.auth.entity.CloudAuthAccount;
 import com.xxx.cloud.auth.security.OAuth2PasswordAuthenticationProvider;
 import com.xxx.cloud.auth.security.model.CloudUserDetails;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -8,7 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2TokenType;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
