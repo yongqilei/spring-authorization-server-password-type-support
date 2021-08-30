@@ -1,19 +1,51 @@
 package com.xxx.cloud.auth.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.server.authorization.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.Objects;
 
 @Component
 public class OAuth2PasswordAuthenticationProvider implements AuthenticationProvider {
+
+    public static final String PASSWORD_TYPE_AUTHENTICATION_KEY = UsernamePasswordAuthenticationToken.class.getName().concat(".PRINCIPAL");
+
+    private final AuthenticationManager authenticationManager;
+    private final JwtEncoder jwtEncoder;
+    private OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer = context -> {};
+    private ProviderSettings providerSettings;
+
+    public OAuth2PasswordAuthenticationProvider(AuthenticationManager authenticationManager, JwtEncoder jwtEncoder) {
+        Assert.notNull(authenticationManager, "authenticationManager cannot be null.");
+        Assert.notNull(jwtEncoder, "jwtEncoder cannot be null.");
+        this.authenticationManager = authenticationManager;
+        this.jwtEncoder = jwtEncoder;
+    }
+
+    public void setTokenCustomizer(OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer) {
+        Assert.notNull(tokenCustomizer, "tokenCustomizer cannot be null.");
+        this.tokenCustomizer = tokenCustomizer;
+    }
+
+    @Autowired
+    public void setProviderSettings(ProviderSettings providerSettings) {
+        this.providerSettings = providerSettings;
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

@@ -69,11 +69,11 @@ public class KeyGeneratorUtils {
         return keyPair;
     }
 
-    public static void main(String[] args) {
-        String secret = "fashion_app";
-        String encoded = new String(Base64.getEncoder().encode(secret.getBytes(StandardCharsets.UTF_8)));
-        System.out.println(encoded);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        System.out.println(passwordEncoder.encode(encoded));
-    }
+//    public static void main(String[] args) {
+//        String secret = "fashion_app";
+//        String encoded = new String(Base64.getEncoder().encode(secret.getBytes(StandardCharsets.UTF_8)));
+//        System.out.println(encoded);
+//        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//        System.out.println(passwordEncoder.encode(encoded));
+//    }
 }
