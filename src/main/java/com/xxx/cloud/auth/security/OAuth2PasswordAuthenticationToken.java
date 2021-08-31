@@ -6,21 +6,21 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.util.Assert;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 public class OAuth2PasswordAuthenticationToken extends AbstractAuthenticationToken implements Authentication {
 
     private final AuthorizationGrantType grantType;
-    private Authentication clientPrincipal;
-    private Object principal;
+    private final Authentication clientPrincipal;
+    private final Object principal;
     private Object credentials;
+    private final Set<String> scopes;
     private Map<String, Object> additionalParameters;
 
     public OAuth2PasswordAuthenticationToken(AuthorizationGrantType grantType,
                                              Authentication clientPrincipal,
                                              Object principal, Object credentials,
+                                             Set<String> scopes,
                                              Map<String, Object> additionalParameters) {
         super(null);
         Assert.notNull(grantType, "Grant type cannot be null.");
@@ -30,12 +30,14 @@ public class OAuth2PasswordAuthenticationToken extends AbstractAuthenticationTok
         this.clientPrincipal = clientPrincipal;
         this.principal = principal;
         this.credentials = credentials;
+        this.scopes = Collections.unmodifiableSet(scopes);
         this.additionalParameters = Collections.unmodifiableMap(additionalParameters != null ? additionalParameters : Collections.emptyMap());
     }
 
     public OAuth2PasswordAuthenticationToken(AuthorizationGrantType grantType,
                                              Authentication clientPrincipal,
                                              Object principal, Object credentials,
+                                             Set<String> scopes,
                                              Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         Assert.notNull(grantType, "Grant type cannot be null.");
@@ -45,6 +47,7 @@ public class OAuth2PasswordAuthenticationToken extends AbstractAuthenticationTok
         this.clientPrincipal = clientPrincipal;
         this.principal = principal;
         this.credentials = credentials;
+        this.scopes = Collections.unmodifiableSet(scopes);
         setAuthenticated(true);
     }
 
@@ -81,5 +84,9 @@ public class OAuth2PasswordAuthenticationToken extends AbstractAuthenticationTok
 
     public Map<String, Object> getAdditionalParameters() {
         return additionalParameters;
+    }
+
+    public Set<String> getScopes() {
+        return scopes;
     }
 }

@@ -19,6 +19,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.xxx.cloud.auth.security.SecurityConstant.*;
+
 public class JsonWebTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
 
     @Override
@@ -47,9 +49,10 @@ public class JsonWebTokenCustomizer implements OAuth2TokenCustomizer<JwtEncoding
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toSet());
                 JwtClaimsSet.Builder builder = context.getClaims();
-                builder.claim(OAuth2ParameterNames.SCOPE, authorities);
-                builder.claim("user_id", userId);
-                builder.claim(OAuth2ParameterNames.USERNAME, principal.getUsername());
+                builder.claim(AUTHORITIES, authorities);
+                builder.claim(USER_ID, userId);
+                principal.eraseCredentials();
+                builder.claim(DETAILS, principal);
             }
         }
     }

@@ -6,15 +6,14 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.web.authentication.AuthenticationConverter;
-import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
 public class OAuth2PasswordAuthenticationConverter implements AuthenticationConverter {
 
     static final String OAUTH2_REQUEST_PARAMETER_ERROR = "OAuth2 Request Parameter Error: ";
@@ -50,6 +49,14 @@ public class OAuth2PasswordAuthenticationConverter implements AuthenticationConv
                     OAuth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
 
+        String scope = parameters.getFirst(OAuth2ParameterNames.SCOPE);
+        if (!StringUtils.hasText(password) || parameters.get(OAuth2ParameterNames.SCOPE).size() != 1) {
+            OAuth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST,
+                    OAuth2ParameterNames.SCOPE, OAuth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
+        }
+        String[] scopeParameters = StringUtils.delimitedListToStringArray(scope, ",");
+        Set<String> scopeSet = Set.of(scopeParameters);
+
         Map<String, Object> additionalParameters = parameters
                 .entrySet()
                 .stream()
@@ -57,6 +64,6 @@ public class OAuth2PasswordAuthenticationConverter implements AuthenticationConv
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get(0)));
 
         return new OAuth2PasswordAuthenticationToken(AuthorizationGrantType.PASSWORD, principal, username,
-                password, additionalParameters);
+                password, scopeSet, additionalParameters);
     }
 }
