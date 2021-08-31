@@ -50,7 +50,7 @@ public class OAuth2PasswordAuthenticationConverter implements AuthenticationConv
         }
 
         String scope = parameters.getFirst(OAuth2ParameterNames.SCOPE);
-        if (!StringUtils.hasText(password) || parameters.get(OAuth2ParameterNames.SCOPE).size() != 1) {
+        if (!StringUtils.hasText(scope) || parameters.get(OAuth2ParameterNames.SCOPE).size() != 1) {
             OAuth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST,
                     OAuth2ParameterNames.SCOPE, OAuth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
