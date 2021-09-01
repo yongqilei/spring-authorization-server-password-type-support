@@ -1,5 +1,6 @@
 package com.xxx.cloud.auth.security;
 
+import com.xxx.cloud.auth.security.model.CloudUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,7 @@ public class OAuth2PasswordAuthenticationProvider implements AuthenticationProvi
 
         JoseHeader.Builder headerBuilder = JwtUtils.headers();
         JwtClaimsSet.Builder claimBuilder = JwtUtils.accessTokenClaims(registeredClient, issuer,
-                String.valueOf(passwordAuthentication.getPrincipal()), requestedScopes);
+                ((CloudUserDetails) passwordAuthentication.getPrincipal()).getUsername(), requestedScopes);
         JwtEncodingContext jwtEncodingContext = JwtEncodingContext.with(headerBuilder, claimBuilder)
                 .registeredClient(registeredClient)
                 .principal(clientAuthenticationToken)

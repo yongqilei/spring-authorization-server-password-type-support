@@ -8,15 +8,18 @@ import com.xxx.cloud.auth.security.OAuth2PasswordAuthenticationConverter;
 import com.xxx.cloud.auth.security.OAuth2PasswordAuthenticationProvider;
 import com.xxx.cloud.auth.security.jose.JsonWebTokenCustomizer;
 import com.xxx.cloud.auth.security.jose.Jwks;
+import com.xxx.cloud.auth.service.CloudUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.server.authorization.JwtEncodingContext;
@@ -37,9 +40,15 @@ import java.util.Objects;
 public class AuthorizationServerConfig {
 
     private final RegisteredClientRepository registeredClientRepository;
+    private final CloudUserDetailsService cloudUserDetailsService;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthorizationServerConfig(RegisteredClientRepository registeredClientRepository) {
+    public AuthorizationServerConfig(RegisteredClientRepository registeredClientRepository,
+                                     CloudUserDetailsService cloudUserDetailsService,
+                                     PasswordEncoder passwordEncoder) {
         this.registeredClientRepository = registeredClientRepository;
+        this.cloudUserDetailsService = cloudUserDetailsService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
@@ -111,6 +120,10 @@ public class AuthorizationServerConfig {
         authenticationProvider.setProviderSettings(providerSettings);
 
         http.authenticationProvider(authenticationProvider);
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(cloudUserDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        http.authenticationProvider(daoAuthenticationProvider);
     }
 
 }

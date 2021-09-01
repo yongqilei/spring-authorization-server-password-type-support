@@ -5,13 +5,12 @@ import com.xxx.cloud.auth.repository.CloudAuthAccountRepository;
 import com.xxx.cloud.auth.security.model.CloudUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.*;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+@Component
 public class CloudUserDetailsService implements UserDetailsService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CloudUserDetailsService.class);
@@ -34,6 +33,9 @@ public class CloudUserDetailsService implements UserDetailsService {
                 .password(account.getPassword())
                 .roles(account.getRoles().toArray(String[]::new))
                 .accountNonLocked(!account.accountLocked())
+                .enabled(account.getEnabled())
+                .accountNonExpired(true)
+                .credentialsNonExpired(true)
                 .build();
     }
 }
