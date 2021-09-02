@@ -62,7 +62,6 @@ public class OAuth2PasswordAuthenticationProvider implements AuthenticationProvi
         this.refreshTokenGenerator = refreshTokenGenerator;
     }
 
-    @Autowired
     public void setProviderSettings(ProviderSettings providerSettings) {
         this.providerSettings = providerSettings;
     }

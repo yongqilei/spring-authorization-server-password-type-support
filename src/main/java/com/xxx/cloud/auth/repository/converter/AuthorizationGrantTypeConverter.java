@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Converter
+@Converter(autoApply = true)
 public class AuthorizationGrantTypeConverter extends AbstractAttributeConverter<List<AuthorizationGrantType>, String>
         implements AttributeConverter<List<AuthorizationGrantType>, String> {
 

@@ -25,17 +25,9 @@ public class CloudRegisteredClient extends AbstractAuditable {
     private String clientSecret;
     private Instant clientSecretExpiresAt;
     private String clientName;
-
-    @Convert(converter = StringToArrayConverter.class)
     private List<String> clientAuthenticationMethods;
-
-    @Convert(converter = AuthorizationGrantTypeConverter.class)
     private List<AuthorizationGrantType> authorizationGrantTypes;
-
-    @Convert(converter = StringToArrayConverter.class)
     private List<String> redirectUris;
-
-    @Convert(converter = StringToArrayConverter.class)
     private List<String> scopes;
 
     public Long getId() {
