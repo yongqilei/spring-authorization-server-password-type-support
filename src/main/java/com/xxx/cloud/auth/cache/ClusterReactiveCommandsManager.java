@@ -5,12 +5,12 @@
 //import org.springframework.stereotype.Component;
 //
 //@Component
-//public class ReactiveCommandsManager {
+//public class ClusterReactiveCommandsManager {
 //
 //    private final RedisClusterClient redisClusterClient;
-//    private RedisAdvancedClusterReactiveCommands<String, String> reactiveCommands;
+//    private volatile RedisAdvancedClusterReactiveCommands<String, String> reactiveCommands;
 //
-//    public ReactiveCommandsManager(RedisClusterClient redisClusterClient) {
+//    public ClusterReactiveCommandsManager(RedisClusterClient redisClusterClient) {
 //        this.redisClusterClient = redisClusterClient;
 //    }
 //

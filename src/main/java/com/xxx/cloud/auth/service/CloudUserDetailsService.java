@@ -1,6 +1,6 @@
 package com.xxx.cloud.auth.service;
 
-import com.xxx.cloud.auth.entity.CloudAuthAccount;
+import com.xxx.cloud.auth.models.entity.CloudAuthAccount;
 import com.xxx.cloud.auth.repository.CloudAuthAccountRepository;
 import com.xxx.cloud.auth.security.model.CloudUserDetails;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package com.xxx.cloud.auth.entity;
+package com.xxx.cloud.auth.models.entity;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-public class AbstractAuditable implements Serializable {
+class AbstractAuditable implements Serializable {
 
     @CreatedDate
     private LocalDateTime createTime;

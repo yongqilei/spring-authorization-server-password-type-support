@@ -1,9 +1,9 @@
 package com.xxx.cloud.auth.security;
 
 import com.xxx.cloud.auth.security.model.CloudUserDetails;
+import com.xxx.cloud.auth.utils.IdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,11 +13,10 @@ import org.springframework.security.crypto.keygen.Base64StringKeyGenerator;
 import org.springframework.security.crypto.keygen.StringKeyGenerator;
 import org.springframework.security.oauth2.core.*;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
-import org.springframework.security.oauth2.jwt.JoseHeader;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.authorization.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
@@ -42,15 +41,19 @@ public class OAuth2PasswordAuthenticationProvider implements AuthenticationProvi
 
     private final AuthenticationManager authenticationManager;
     private final JwtEncoder jwtEncoder;
+    private final OAuth2AuthorizationService authorizationService;
     private OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer = context -> {};
     private Supplier<String> refreshTokenGenerator = DEFAULT_REFRESH_TOKEN_GENERATOR::generateKey;
     private ProviderSettings providerSettings;
 
-    public OAuth2PasswordAuthenticationProvider(AuthenticationManager authenticationManager, JwtEncoder jwtEncoder) {
+    public OAuth2PasswordAuthenticationProvider(AuthenticationManager authenticationManager,
+                                                JwtEncoder jwtEncoder,
+                                                OAuth2AuthorizationService authorizationService) {
         Assert.notNull(authenticationManager, "authenticationManager cannot be null.");
         Assert.notNull(jwtEncoder, "jwtEncoder cannot be null.");
         this.authenticationManager = authenticationManager;
         this.jwtEncoder = jwtEncoder;
+        this.authorizationService = authorizationService;
     }
 
     public void setTokenCustomizer(OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer) {
@@ -126,6 +129,19 @@ public class OAuth2PasswordAuthenticationProvider implements AuthenticationProvi
                 !clientAuthenticationToken.getClientAuthenticationMethod().equals(ClientAuthenticationMethod.NONE)) {
             refreshToken = generateRefreshToken(registeredClient.getTokenSettings().getRefreshTokenTimeToLive());
         }
+
+        OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
+                .id(IdGenerator.generateAuthorizationId(registeredClient.getClientId()))
+                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+                .principalName(username)
+                .token(accessToken, metadata -> metadata.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME, accessToken))
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .attribute(JwtClaimNames.JTI, jwt.getId())
+                .attribute(JwtClaimNames.EXP, jwt.getExpiresAt());
+
+
+        this.authorizationService.save(authorizationBuilder.build());
 
         return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientAuthenticationToken, accessToken, refreshToken);
     }

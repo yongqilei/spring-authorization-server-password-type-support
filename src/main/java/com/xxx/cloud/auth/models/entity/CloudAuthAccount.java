@@ -1,6 +1,4 @@
-package com.xxx.cloud.auth.entity;
-
-import com.xxx.cloud.auth.repository.converter.StringToArrayConverter;
+package com.xxx.cloud.auth.models.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,7 +8,7 @@ import java.util.List;
 public class CloudAuthAccount extends AbstractAuditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
     private String password;
@@ -18,7 +16,6 @@ public class CloudAuthAccount extends AbstractAuditable {
     private Boolean loginLocked;
     private LocalDateTime unlockTime;
     private Boolean enabled;
-    @Convert(converter = StringToArrayConverter.class)
     private List<String> roles;
 
     public Long getId() {

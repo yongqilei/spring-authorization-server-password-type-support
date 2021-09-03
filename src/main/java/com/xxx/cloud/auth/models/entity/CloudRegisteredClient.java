@@ -1,17 +1,13 @@
-package com.xxx.cloud.auth.entity;
+package com.xxx.cloud.auth.models.entity;
 
-import com.xxx.cloud.auth.repository.converter.AuthorizationGrantTypeConverter;
-import com.xxx.cloud.auth.repository.converter.StringToArrayConverter;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity

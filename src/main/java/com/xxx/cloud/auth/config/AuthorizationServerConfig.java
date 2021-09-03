@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.server.authorization.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
@@ -110,7 +111,9 @@ public class AuthorizationServerConfig {
         ProviderSettings providerSettings = http.getSharedObject(ProviderSettings.class);
         AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
         JwtEncoder jwtEncoder = http.getSharedObject(JwtEncoder.class);
-        OAuth2PasswordAuthenticationProvider authenticationProvider = new OAuth2PasswordAuthenticationProvider(authenticationManager, jwtEncoder);
+        OAuth2AuthorizationService authorizationService = http.getSharedObject(OAuth2AuthorizationService.class);
+        OAuth2PasswordAuthenticationProvider authenticationProvider =
+                new OAuth2PasswordAuthenticationProvider(authenticationManager, jwtEncoder, authorizationService);
 
         OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer = jwtTokenCustomizer();
         if (Objects.nonNull(jwtCustomizer)) {
